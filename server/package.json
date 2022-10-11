@@ -1,0 +1,37 @@
+{
+  "name": "invocify",
+  "version": "1.0.0",
+  "description": "#### Track Your Invoice",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm install && nodemon server"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^6.4.0",
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
+    "express-mongo-sanitize": "^2.1.0",
+    "express-rate-limit": "^6.0.4",
+    "helmet": "^5.0.1",
+    "http-status-codes": "^2.1.4",
+    "jsonwebtoken": "^8.5.1",
+    "moment-timezone": "^0.5.34",
+    "mongodb": "^4.1.3",
+    "morgan": "^1.10.0",
+    "randomstring": "^1.2.2",
+    "validator": "^13.7.0",
+    "xss-clean": "^0.1.1"
+  },
+  "engines": {
+    "node": "18.x"
+  }
+}
