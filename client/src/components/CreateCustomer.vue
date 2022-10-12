@@ -36,16 +36,19 @@ export default {
   },
   computed: {
     ...mapState([
-      'apiData'
+      
     ])
   },
   methods: {
     ...mapActions([
-      'setItem',
+      'getItem',
+      'getInvoices',
+      'getCustomers',
+      'getPayments',
     ])
   },
-  mounted() {
-    this.apiData && this.setItem({ item: this.apiData.token, itemName: 'token' });
+  async created() {
+    
   },
   unmounted() {
 

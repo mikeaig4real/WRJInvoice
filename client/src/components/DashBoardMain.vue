@@ -33,17 +33,19 @@ export default {
   },
   computed: {
     ...mapState([
-      'userInfo',
+      
     ])
   },
   methods: {
     ...mapActions([
-      
+      'getItem',
+      'getInvoices',
+      'getCustomers',
+      'getPayments',
     ])
   },
-  async mounted() {
-    
-    // console.log(this.apiData);
+  async created() {
+   
   },
   unmounted() {
 

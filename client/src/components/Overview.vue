@@ -84,7 +84,10 @@ export default {
     },
     methods: {
         ...mapActions([
-
+            'getItem',
+            'getInvoices',
+            'getCustomers',
+            'getPayments',
         ]),
         getComputedValues(invoices) {
             let computedValues = invoices.reduce((tAcc, { payments, items, dueDate }) => {
@@ -122,8 +125,8 @@ export default {
             return computedValues;
         }
     },
-    mounted() {
-        
+    async created() {
+        await this.getInvoices({});
     },
     unmounted() {
 

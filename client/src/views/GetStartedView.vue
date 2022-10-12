@@ -93,8 +93,8 @@ export default {
         ...mapActions([
             'clearError',
             'setError',
-            'makeApiCall',
-            'resetState',
+            'loginUser',
+            'registerUser'
         ]),
         async goToDashBoard() {
             try {
@@ -106,42 +106,19 @@ export default {
                         this.repeatPassword = '';
                         this.clearError({});
                     };
-                    await this.makeApiCall({
-                        urlSuffix: '/auth/register',
-                        params: { email, password, firstName, lastName },
-                        method: 'post',
-                        routeTo: {
-                            name: 'dashboard',
-                            queryProps: ['userId', 'fullName']
-                        },
-                        router: this.$router,
-                        setAs: 'userInfo',
-                        toLocal: true,
-                    });
+                    await this.registerUser({ firstName, lastName, email, password, router: this.$router });
                     return;
                 };
                 // Login
-                await this.makeApiCall({
-                    urlSuffix: '/auth/login',
-                    params: { email, password },
-                    method: 'post',
-                    routeTo: {
-                        name: 'dashboard',
-                        queryProps: ['userId', 'fullName']
-                    },
-                    router: this.$router,
-                    setAs: 'userInfo',
-                    toLocal: true,
-                });
+                await this.loginUser({ email, password, router: this.$router });
             } catch (error) {
                 this.setError(error);
                 this.clearError({});
             }
         }
     },
-    mounted() {
+    created() {
         localStorage.removeItem('userInfo');
-        // this.resetState();
     }
 }
 

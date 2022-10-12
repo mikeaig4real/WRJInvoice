@@ -7,7 +7,9 @@ const initialState = {
     isLoading: false,
     timeout: null,
     userInfo: null,
-    invoices: [],
+    customers: null,
+    payments: null,
+    invoices: null,
     baseUrl: 'http://localhost:8081/api/v1',
     caller: axios,
 };
@@ -78,6 +80,114 @@ const makeApiCall = async (state, { urlSuffix, params = {}, method, options = {}
     };
 };
 
+const getInvoices = async (state, { }) => {
+    try {
+        if (!state.userInfo) await getItem(state, { itemName: 'userInfo' });
+        await makeApiCall(state, {
+            urlSuffix: '/invoice',
+            method: 'get',
+            options: {
+                "Authorization": `Bearer ${state?.userInfo?.token || JSON.parse(localStorage.getItem('userInfo'))?.token}`
+            },
+            setAs: 'invoices',
+            toLocal: false,
+        });
+        state.invoices.forEach((invoice) => {
+            invoice.dueDate = invoice.dueDate.slice(0, 10);
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const registerUser = async (state, { email, password, firstName, lastName, router }) => {
+    try {
+        await makeApiCall(state, {
+            urlSuffix: '/auth/register',
+            params: { email, password, firstName, lastName },
+            method: 'post',
+            routeTo: {
+                name: 'dashboard',
+                queryProps: ['userId', 'fullName']
+            },
+            router,
+            setAs: 'userInfo',
+            toLocal: true,
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const loginUser = async (state, { email, password, router }) => {
+    try {
+        await makeApiCall(state, {
+            urlSuffix: '/auth/login',
+            params: { email, password },
+            method: 'post',
+            routeTo: {
+                name: 'dashboard',
+                queryProps: ['userId', 'fullName']
+            },
+            router,
+            setAs: 'userInfo',
+            toLocal: true,
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const getCustomers = async (state, { }) => {
+    try {
+        if (!state.userInfo) await getItem(state, { itemName: 'userInfo' });
+        await makeApiCall(state, {
+            urlSuffix: '/customer',
+            method: 'get',
+            options: {
+                "Authorization": `Bearer ${state?.userInfo?.token || JSON.parse(localStorage.getItem('userInfo'))?.token}`
+            },
+            setAs: 'customers',
+            toLocal: false,
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const getPayments = async (state, { }) => {
+    try {
+        if (!state.userInfo) await getItem(state, { itemName: 'userInfo' });
+        await makeApiCall(state, {
+            urlSuffix: '/payment',
+            method: 'get',
+            options: {
+                "Authorization": `Bearer ${state?.userInfo?.token || JSON.parse(localStorage.getItem('userInfo')).token}`
+            },
+            setAs: 'payment',
+            toLocal: false,
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+};
+
+const deleteInvoice = async (state, { invoicedId }) => {
+    try {
+        if (!state.userInfo) await getItem(state, { itemName: 'userInfo' });
+        await makeApiCall(state, {
+            urlSuffix: `/invoice/${invoicedId}`,
+            method: 'delete',
+            options: {
+                "Authorization": `Bearer ${state?.userInfo?.token || JSON.parse(localStorage.getItem('userInfo')).token}`
+            },
+        });
+        await getInvoices(state, {});
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
 export default {
     makeApiCall,
     setItem,
@@ -85,4 +195,10 @@ export default {
     clearError,
     setError,
     resetState,
+    getInvoices,
+    registerUser,
+    loginUser,
+    getCustomers,
+    getPayments,
+    deleteInvoice,
 };

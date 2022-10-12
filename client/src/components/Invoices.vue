@@ -60,7 +60,7 @@
                     </td>
                     <td class="text-sm text-gray-900 font-light px-6 py-4 whitespace-nowrap">
                       <div class="flex space-x-2 justify-center">
-                        <button @click="deleteInvoice(invoiceId)" type="button" data-mdb-ripple="true" data-mdb-ripple-color="light"
+                        <button @click="deleteOneInvoice(invoiceId)" type="button" data-mdb-ripple="true" data-mdb-ripple-color="light"
                           class="inline-block px-6 py-2.5 bg-red-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-red-700 hover:shadow-lg focus:bg-red-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-red-800 active:shadow-lg transition duration-150 ease-in-out">
                           Delete
                         </button>
@@ -107,14 +107,16 @@ export default {
   computed: {
     ...mapState([
       'invoices',
-      'userInfo',
       'isLoading'
     ])
   },
   methods: {
     ...mapActions([
-      'makeApiCall',
-      'getItem'
+      'deleteInvoice',
+      'getItem',
+      'getInvoices',
+      'getCustomers',
+      'getPayments',
     ]),
     getTotal(items) {
       return items.reduce((acc, { amount }) => {
@@ -133,43 +135,17 @@ export default {
       }, 0);
       return totalPayments === 0 ? 'None' : totalPayments >= totalCost ?  'Full' : 'Partial'
     },
-    async deleteInvoice(invoicedId) {
+    async deleteOneInvoice(invoicedId) {
       try {
-        if (!this.userInfo) await this.getItem({ itemName: 'userInfo' });
-        await this.makeApiCall({
-          urlSuffix: `/invoice/${invoicedId}`,
-          method: 'delete',
-          options: {
-            "Authorization": `Bearer ${this.userInfo.token || JSON.parse(localStorage.getItem('userInfo')).token}`
-          },
-        }); 
-        await this.makeApiCall({
-          urlSuffix: '/invoice',
-          method: 'get',
-          options: {
-            "Authorization": `Bearer ${this.userInfo.token || JSON.parse(localStorage.getItem('userInfo')).token}`
-          },
-          setAs: 'invoices',
-          toLocal: false,
-        });
+        await this.deleteInvoice({ invoicedId });
       } catch (error) {
         this.$router.push({ name: 'dashboard' });
       }
     },
   },
-  async mounted() {
+  async created() {
     try {
-      if (!this.invoices) return;
-      if (!this.userInfo) await this.getItem({ itemName: 'userInfo' });
-      await this.makeApiCall({
-        urlSuffix: '/invoice',
-        method: 'get',
-        options: {
-          "Authorization": `Bearer ${this.userInfo.token || JSON.parse(localStorage.getItem('userInfo')).token}`
-        },
-        setAs: 'invoices',
-        toLocal: false,
-      });
+      await this.getInvoices({});
     } catch (error) {
       this.$router.push({ name: 'dashboard' });
     }

@@ -45,37 +45,24 @@ export default {
   methods: {
     ...mapActions([
       'getItem',
-      'makeApiCall',
-      'computeOverview'
+      'getInvoices',
+      'getCustomers',
+      'getPayments',
     ])
   },
   async mounted() {
+
+  },
+  unmounted() {
+
+  },
+  async created() {
     try {
-      if (!this.userInfo) await this.getItem({ itemName: 'userInfo' });
-      await this.makeApiCall({
-        urlSuffix: '/invoice',
-        method: 'get',
-        options: {
-          "Authorization": `Bearer ${this.userInfo.token || JSON.parse(localStorage.getItem('userInfo')).token}`
-        },
-        setAs: 'invoices',
-        toLocal: false,
-      });
-      await this.makeApiCall({
-        urlSuffix: '/payment',
-        method: 'get',
-        options: {
-          "Authorization": `Bearer ${this.userInfo.token || JSON.parse(localStorage.getItem('userInfo')).token}`
-        },
-        setAs: 'payment',
-        toLocal: false,
-      });
+      await this.getInvoices({});
+      console.log(this.invoices);
     } catch (error) {
       this.$router.push({ name: 'get-started' });
     };
-  },
-  unmounted() {
-    
   }
 }
 </script>

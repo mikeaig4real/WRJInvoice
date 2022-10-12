@@ -89,11 +89,14 @@ export default {
   },
   methods: {
     ...mapActions([
-
+      'getItem',
+      'getInvoices',
+      'getCustomers',
+      'getPayments',
     ])
   },
-  mounted() {
-
+  async created() {
+    await this.getPayments({});
   },
   unmounted() {
 
